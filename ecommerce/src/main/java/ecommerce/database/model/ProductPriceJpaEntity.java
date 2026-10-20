@@ -11,6 +11,7 @@ import java.math.BigDecimal;
         @UniqueConstraint(columnNames = {"product_id", "company_id"})
 })
 @Getter
+@Setter
 public class ProductPriceJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,0 +1,66 @@
+<div class="p-6 max-w-7xl mx-auto">
+  <!-- En-tête -->
+  <header class="text-center mb-6">
+    <h1 class="text-4xl font-bold mb-2">🛍️ Mon E-commerce</h1>
+    <p class="text-color-secondary">Catalogue de produits (Backend Spring Boot & Architecture Hexagonale)</p>
+  </header>
+
+  <!-- Barre de recherche PrimeNG -->
+  <div class="flex justify-content-center mb-6">
+    <span class="p-input-icon-left w-full max-w-20rem">
+      <i class="pi pi-search"></i>
+      <input
+        type="text"
+        pInputText
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()"
+        placeholder="Rechercher par nom..."
+        class="w-full"
+      />
+    </span>
+  </div>
+
+  <!-- État de chargement -->
+  @if (loading) {
+    <div class="text-center p-6">
+      <i class="pi pi-spin pi-spinner text-4xl mb-3"></i>
+      <p>Chargement du catalogue...</p>
+    </div>
+  } @else {
+    <!-- Grille de cartes produits PrimeNG -->
+    <div class="grid">
+      @for (p of products; track p.id) {
+        <div class="col-12 sm:col-6 md:col-4 lg:col-3">
+          <p-card [header]="p.name" [subheader]="'SKU: ' + p.sku" styleClass="h-full shadow-2 hover:shadow-5 transition-duration-200">
+            <ng-template pTemplate="header">
+              <div class="surface-ground flex align-items-center justify-content-center border-round-top" style="height: 160px;">
+                <i class="pi pi-box text-6xl text-400"></i>
+              </div>
+            </ng-template>
+
+            <div class="flex align-items-center justify-content-between my-3">
+              <span class="text-2xl font-bold text-primary">{{ p.basePriceHt }} € <small class="text-sm text-color-secondary">HT</small></span>
+              <p-badge
+                [value]="p.stockQuantity > 0 ? 'En stock (' + p.stockQuantity + ')' : 'Rupture'"
+                [severity]="p.stockQuantity > 0 ? 'success' : 'danger'">
+              </p-badge>
+            </div>
+
+            <ng-template pTemplate="footer">
+              <p-button
+                label="Ajouter au panier"
+                icon="pi pi-shopping-cart"
+                styleClass="w-full p-button-outlined">
+              </p-button>
+            </ng-template>
+          </p-card>
+        </div>
+      } @empty {
+        <div class="col-12 text-center p-6">
+          <i class="pi pi-info-circle text-4xl mb-3 text-500"></i>
+          <p>Aucun produit ne correspond à votre recherche.</p>
+        </div>
+      }
+    </div>
+  }
+</div>

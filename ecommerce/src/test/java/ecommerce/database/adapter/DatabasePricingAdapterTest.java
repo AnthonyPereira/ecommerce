@@ -3,6 +3,7 @@ package ecommerce.database.adapter;
 import ecommerce.database.mapper.ProductPriceMapper;
 import ecommerce.database.SpringDataProductPriceRepository;
 import ecommerce.database.model.ProductPriceJpaEntity;
+import ecommerce.domain.model.ProductPrice;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -20,11 +21,8 @@ public class DatabasePricingAdapterTest {
 
     @BeforeEach
     void setUp() {
-        // On mock le repository JPA et le mapper MapStruct
         repository = Mockito.mock(SpringDataProductPriceRepository.class);
         mapper = Mockito.mock(ProductPriceMapper.class);
-
-        // On instancie l'adaptateur en lui injectant les faux objets
         adapter = new DatabasePricingAdapter(repository, mapper);
     }
 
@@ -35,14 +33,18 @@ public class DatabasePricingAdapterTest {
         Long companyId = 1L;
         BigDecimal expectedPrice = new BigDecimal("2150.00");
 
-        // On simule que le repository trouve une entité en base
-        // (Adaptez la méthode selon le nom exact de votre repository Spring Data)
-
         ProductPriceJpaEntity jpaEntity = new ProductPriceJpaEntity();
-        jpaEntity.setPriceHt(expectedPrice);
+        ProductPrice domainModel = mock(ProductPrice.class);
 
+        // 1. On stubbe le repository JPA
         when(repository.findByProductIdAndCompanyId(productId, companyId))
                 .thenReturn(Optional.of(jpaEntity));
+
+        // 2. On stubbe le mapper pour qu'il renvoie un objet domaine valide
+        when(mapper.toDomain(jpaEntity)).thenReturn(domainModel);
+
+        // 3. On stubbe l'objet domaine pour qu'il retourne le prix attendu
+        when(domainModel.getPriceHt()).thenReturn(expectedPrice);
 
         // When
         Optional<BigDecimal> result = adapter.getPriceForProductAndCompany(productId, companyId);
@@ -59,7 +61,7 @@ public class DatabasePricingAdapterTest {
         Long productId = 99L;
         Long companyId = null;
 
-        when(repository.findByProductIdAndCompanyId(productId, companyId))
+        when(repository.findByProductIdAndCompanyIdIsNull(productId))
                 .thenReturn(Optional.empty());
 
         // When
@@ -67,6 +69,6 @@ public class DatabasePricingAdapterTest {
 
         // Then
         assertThat(result).isEmpty();
-        verify(repository, times(1)).findByProductIdAndCompanyId(productId, companyId);
+        verify(repository, times(1)).findByProductIdAndCompanyIdIsNull(productId);
     }
 }

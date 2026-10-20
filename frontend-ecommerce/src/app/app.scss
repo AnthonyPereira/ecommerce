@@ -1,0 +1,14 @@
+::ng-deep {
+  .p-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .p-card-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+    }
+  }
+}
