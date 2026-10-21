@@ -3,7 +3,7 @@ package ecommerce.api;
 
 import ecommerce.api.dto.ProductResponseDto;
 import ecommerce.domain.model.Product;
-import ecommerce.domain.model.UserContext;
+import ecommerce.domain.model.User;
 import ecommerce.domain.service.CalculateProductPriceUseCase;
 import ecommerce.domain.service.FindProductsUseCase;
 import org.springframework.http.ResponseEntity;
@@ -32,9 +32,9 @@ public class ProductController {
             @RequestHeader(value = "X-Company-Id", required = false) Long companyId) { // Simule l'entreprise de l'utilisateur connecté
 
         // Construction du contexte utilisateur basé sur l'authentification
-        UserContext userContext = new UserContext(100L, companyId);
+        User user = new User(100L, companyId, "firstName", "lastName", "mail@email.fr");
 
-        BigDecimal price = calculateProductPriceUseCase.execute(productId, userContext);
+        BigDecimal price = calculateProductPriceUseCase.execute(productId, user);
         return ResponseEntity.ok(price);
     }
 

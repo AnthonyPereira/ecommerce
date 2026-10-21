@@ -1,6 +1,5 @@
--- 1. Création de la base de données si elle n'existe pas
--- (Note : \gexec permet d'exécuter dynamiquement le résultat de la requête)
-SELECT 'CREATE DATABASE ecommerce'
+-- 1. Création de la base de données en UTF-8 si elle n'existe pas
+SELECT 'CREATE DATABASE ecommerce WITH ENCODING = ''UTF8'''
 WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'ecommerce')\gexec
 
 -- 2. Connexion à la nouvelle base de données
@@ -18,6 +17,18 @@ CREATE TABLE companies (
     vat_number VARCHAR(50),
     credit_limit NUMERIC(12, 2),
     payment_term_days INTEGER DEFAULT 0
+);
+
+-- Table des utilisateurs (B2C si company_id est NULL, B2B si rattaché à une entreprise)
+CREATE TABLE users (
+    id BIGSERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    company_id BIGINT, -- NULL = Client B2C / Rempli = Salarié/Acheteur B2B
+
+    CONSTRAINT fk_user_company FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE SET NULL
 );
 
 -- Table des produits du catalogue
@@ -57,6 +68,16 @@ ON CONFLICT (id) DO NOTHING;
 
 -- Réinitialisation de la séquence companies
 SELECT setval('companies_id_seq', (SELECT MAX(id) FROM companies));
+
+-- Insertion des utilisateurs (B2C et B2B)
+INSERT INTO users (id, email, password_hash, first_name, last_name, company_id) VALUES
+(1, 'b2c.user@example.com', '$2a$10$dummyhashb2cuser', 'Jean', 'Dupont', NULL), -- Client B2C pur
+(2, 'buyer@acme.com', '$2a$10$dummyhashacmebuyer', 'Alice', 'Martin', 1),     -- Acheteur B2B Acme Corp
+(3, 'buyer@globex.com', '$2a$10$dummyhashglobexbuyer', 'Bob', 'Lemoine', 2)     -- Acheteur B2B Globex Corporation
+ON CONFLICT (id) DO NOTHING;
+
+-- Réinitialisation de la séquence users
+SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
 
 -- Insertion des produits (avec SKU, prix de base et stock)
 INSERT INTO products (id, sku, name, description, base_price_ht, stock_quantity) VALUES

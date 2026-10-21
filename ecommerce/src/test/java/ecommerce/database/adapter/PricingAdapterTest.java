@@ -1,7 +1,7 @@
 package ecommerce.database.adapter;
 
 import ecommerce.database.mapper.ProductPriceMapper;
-import ecommerce.database.SpringDataProductPriceRepository;
+import ecommerce.database.ProductPriceRepository;
 import ecommerce.database.model.ProductPriceJpaEntity;
 import ecommerce.domain.model.ProductPrice;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,16 +14,16 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class DatabasePricingAdapterTest {
-    private SpringDataProductPriceRepository repository;
+public class PricingAdapterTest {
+    private ProductPriceRepository repository;
     private ProductPriceMapper mapper;
-    private DatabasePricingAdapter adapter;
+    private PricingAdapter adapter;
 
     @BeforeEach
     void setUp() {
-        repository = Mockito.mock(SpringDataProductPriceRepository.class);
+        repository = Mockito.mock(ProductPriceRepository.class);
         mapper = Mockito.mock(ProductPriceMapper.class);
-        adapter = new DatabasePricingAdapter(repository, mapper);
+        adapter = new PricingAdapter(repository, mapper);
     }
 
     @Test

@@ -1,6 +1,6 @@
 package ecommerce.database.adapter;
 
-import ecommerce.database.SpringDataProductPriceRepository;
+import ecommerce.database.ProductPriceRepository;
 import ecommerce.database.mapper.ProductPriceMapper;
 import ecommerce.database.model.ProductPriceJpaEntity;
 import ecommerce.domain.model.ProductPrice;
@@ -11,12 +11,12 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 @Service
-public class DatabasePricingAdapter implements PricingPort {
+public class PricingAdapter implements PricingPort {
 
-    private final SpringDataProductPriceRepository repository;
+    private final ProductPriceRepository repository;
     private final ProductPriceMapper mapper;
 
-    public DatabasePricingAdapter(SpringDataProductPriceRepository repository, ProductPriceMapper mapper) {
+    public PricingAdapter(ProductPriceRepository repository, ProductPriceMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }

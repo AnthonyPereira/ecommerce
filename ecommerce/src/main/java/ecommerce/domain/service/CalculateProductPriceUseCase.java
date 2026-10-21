@@ -1,6 +1,6 @@
 package ecommerce.domain.service;
 
-import ecommerce.domain.model.UserContext;
+import ecommerce.domain.model.User;
 import ecommerce.domain.port.PricingPort;
 
 import java.math.BigDecimal;
@@ -13,9 +13,9 @@ public class CalculateProductPriceUseCase {
         this.pricingPort = pricingPort;
     }
 
-    public BigDecimal execute(Long productId, UserContext userContext) {
+    public BigDecimal execute(Long productId, User user) {
         // Extrait le companyId si l'utilisateur appartient à une entreprise (B2B), sinon null (B2C)
-        Long companyId = (userContext != null) ? userContext.getCompanyId() : null;
+        Long companyId = (user != null) ? user.getCompanyId() : null;
 
         return pricingPort.getPriceForProductAndCompany(productId, companyId)
                 .orElseThrow(() -> new IllegalStateException("Aucun prix trouvé pour le produit ID : " + productId));

@@ -1,0 +1,41 @@
+<div class="login-wrapper">
+  <p-card header="Connexion E-commerce" styleClass="login-card shadow-3">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+
+      <div class="field-group">
+        <label for="email">Email</label>
+        <input
+          pInputText
+          id="email"
+          formControlName="email"
+          placeholder="ex: buyer@acme.com"
+        />
+      </div>
+
+      <div class="field-group">
+        <label for="password">Mot de passe</label>
+        <input
+          pInputText
+          type="password"
+          id="password"
+          formControlName="password"
+          placeholder="••••••••"
+        />
+      </div>
+
+      @if (errorMessage) {
+        <p-message severity="error">{{ errorMessage }}</p-message>
+      }
+
+      <button
+        pButton
+        type="submit"
+        [disabled]="loading || loginForm.invalid"
+        class="submit-btn">
+        <i [class]="loading ? 'pi pi-spinner pi-spin mr-2' : 'pi pi-sign-in mr-2'"></i>
+        <span>{{ loading ? 'Connexion en cours...' : 'Se connecter' }}</span>
+      </button>
+
+    </form>
+  </p-card>
+</div>

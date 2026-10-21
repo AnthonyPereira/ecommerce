@@ -1,46 +1,47 @@
-import { Component, OnInit } from '@angular/core';
-import { ProductService } from './services/product';
-import { Product } from './models/product.model';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { BadgeModule } from 'primeng/badge';
 import { InputTextModule } from 'primeng/inputtext';
+import { AuthService } from './services/auth-service';
+import { Router, RouterOutlet } from '@angular/router';
+import {Header} from './header/header/header';
 
 @Component({
-  imports: [FormsModule, CommonModule, InputTextModule, CardModule, ButtonModule, BadgeModule],
+  imports: [
+    FormsModule,
+    CommonModule,
+    InputTextModule,
+    CardModule,
+    ButtonModule,
+    BadgeModule,
+    RouterOutlet,
+    Header,
+  ],
   selector: 'app-root',
   styleUrl: './app.scss',
   templateUrl: './app.html',
 })
-export class App implements OnInit {
-  products: Product[] = [];
-  loading = true;
-  searchTerm: string = '';
+export class App {
+  authService = inject(AuthService);
+  router = inject(Router);
 
-  constructor(private productService: ProductService) {}
+  currentUser = this.authService.currentUser;
+  isAuthenticated = this.authService.isAuthenticated;
+  isB2B = this.authService.isB2B;
 
-  ngOnInit(): void {
-    this.loadProducts();
+  goToLogin() {
+    void this.router.navigate(['/login']);
   }
 
-  loadProducts(): void {
-    this.loading = true;
-    this.productService.getProducts(this.searchTerm).subscribe({
-      next: (data) => {
-        this.products = data;
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Erreur lors du chargement des produits', err);
-        this.loading = false;
-      },
-    });
+  goToCatalog() {
+    void this.router.navigate(['/']);
   }
 
-  // Déclenché à chaque modification du texte de recherche
-  onSearchChange(): void {
-    this.loadProducts();
+  logout() {
+    this.authService.logout();
+    void this.router.navigate(['/']);
   }
 }

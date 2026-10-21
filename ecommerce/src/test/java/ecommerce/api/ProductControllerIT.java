@@ -1,6 +1,6 @@
 package ecommerce.api;
 
-import ecommerce.domain.model.UserContext;
+import ecommerce.domain.model.User;
 import ecommerce.domain.service.CalculateProductPriceUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -37,7 +37,7 @@ class ProductControllerIT {
         Long productId = 1L;
         BigDecimal publicPrice = new BigDecimal("2400.00");
 
-        when(calculateProductPriceUseCase.execute(eq(productId), any(UserContext.class)))
+        when(calculateProductPriceUseCase.execute(eq(productId), any(User.class)))
                 .thenReturn(publicPrice);
 
         // When & Then
@@ -54,7 +54,7 @@ class ProductControllerIT {
         Long companyId = 1L;
         BigDecimal negotiatedPrice = new BigDecimal("2150.00");
 
-        when(calculateProductPriceUseCase.execute(eq(productId), any(UserContext.class)))
+        when(calculateProductPriceUseCase.execute(eq(productId), any(User.class)))
                 .thenReturn(negotiatedPrice);
 
         // When & Then

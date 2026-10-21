@@ -1,0 +1,66 @@
+<div class="max-w-screen-xl mx-auto p-4">
+  <!-- Barre de recherche moderne -->
+  <div class="flex justify-content-center mb-5">
+    <span class="p-input-icon-left w-full md:w-25rem">
+      <i class="pi pi-search"></i>
+      <input
+        type="text"
+        pInputText
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()"
+        placeholder="Rechercher un produit par son nom..."
+        class="w-full"
+      />
+    </span>
+  </div>
+
+  <!-- État de chargement -->
+  @if (loading()) {
+    <div class="flex flex-column align-items-center justify-content-center py-8 text-center">
+      <i class="pi pi-spin pi-spinner text-4xl text-primary mb-3"></i>
+      <p class="text-600 font-medium">Chargement du catalogue...</p>
+    </div>
+  } @else {
+    <!-- Grille de produits responsive -->
+    <div class="products-grid">
+      @for (p of products(); track p.id) {
+        <p-card [header]="p.name" [subheader]="'SKU: ' + p.sku" class="shadow-1 h-full block">
+
+          <!-- Image / Illustration du produit -->
+          <ng-template #header>
+            <div class="surface-ground flex align-items-center justify-content-center" style="height: 140px;">
+              <i class="pi pi-box text-5xl text-primary"></i>
+            </div>
+          </ng-template>
+
+          <!-- Prix et Stock -->
+          <div class="flex align-items-center justify-content-between my-3">
+            <span class="text-2xl font-bold text-primary">
+              {{ p.basePriceHt }} € <small class="text-sm text-color-secondary font-normal">HT</small>
+            </span>
+            <p-badge
+              [value]="p.stockQuantity > 0 ? 'En stock (' + p.stockQuantity + ')' : 'Rupture'"
+              [severity]="p.stockQuantity > 0 ? 'success' : 'danger'">
+            </p-badge>
+          </div>
+
+          <!-- Bouton d'action -->
+          <ng-template #footer>
+            <button
+              pButton
+              type="button"
+              class="p-button-outlined p-button-sm w-full">
+              <i class="pi pi-shopping-cart mr-2"></i>
+              <span>Ajouter au panier</span>
+            </button>
+          </ng-template>
+        </p-card>
+      } @empty {
+        <div class="flex flex-column align-items-center justify-content-center py-8 text-center col-12">
+          <i class="pi pi-info-circle text-4xl text-400 mb-2"></i>
+          <p class="text-600">Aucun produit ne correspond à votre recherche.</p>
+        </div>
+      }
+    </div>
+  }
+</div>

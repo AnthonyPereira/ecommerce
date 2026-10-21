@@ -1,0 +1,50 @@
+<div class="max-w-screen-xl mx-auto p-4 flex justify-content-center align-items-center" style="min-height: 80vh;">
+  <p-card header="Mon Profil" styleClass="shadow-3 w-full max-w-30rem">
+
+    @if (user(); as currentUser) {
+      <div class="flex flex-column gap-4 my-3">
+
+        <!-- En-tête du profil -->
+        <div class="flex flex-column align-items-center justify-content-center surface-ground p-4 border-round">
+          <i class="pi pi-user text-6xl text-primary mb-2"></i>
+          <span class="text-xl font-bold text-900">{{ currentUser.email }}</span>
+        </div>
+
+        <!-- Détails du compte -->
+        <div class="flex flex-column gap-3">
+          <div class="flex justify-content-between align-items-center p-2 surface-border border-bottom-1">
+            <span class="font-medium text-color-secondary">Type de compte :</span>
+            <p-badge
+              [value]="isB2B() ? 'Mode B2B (Entreprise)' : 'Mode B2C (Public)'"
+              [severity]="isB2B() ? 'success' : 'info'">
+            </p-badge>
+          </div>
+
+          @if (isB2B()) {
+            <div class="flex justify-content-between align-items-center p-2 surface-border border-bottom-1">
+              <span class="font-medium text-color-secondary">ID Entreprise (Company ID) :</span>
+              <span class="font-semibold">{{ currentUser.companyId }}</span>
+            </div>
+          }
+        </div>
+
+        <!-- Bouton de retour -->
+        <button
+          pButton
+          type="button"
+          class="p-button-outlined w-full mt-3"
+          (click)="goToCatalog()">
+          <i class="pi pi-arrow-left mr-2"></i>
+          <span>Retour au catalogue</span>
+        </button>
+
+      </div>
+    } @else {
+      <div class="text-center py-5">
+        <i class="pi pi-info-circle text-3xl text-orange-500 mb-2"></i>
+        <p class="text-600">Aucune session active trouvée.</p>
+      </div>
+    }
+
+  </p-card>
+</div>

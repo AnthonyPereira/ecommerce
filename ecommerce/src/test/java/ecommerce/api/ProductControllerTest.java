@@ -1,12 +1,11 @@
 package ecommerce.api;
 
-import ecommerce.domain.model.UserContext;
+import ecommerce.domain.model.User;
 import ecommerce.domain.service.CalculateProductPriceUseCase;
 import ecommerce.domain.service.FindProductsUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.internal.matchers.Find;
 
 import java.math.BigDecimal;
 
@@ -37,7 +36,7 @@ class ProductControllerTest {
         Long companyId = 10L;
         BigDecimal expectedPrice = new BigDecimal("2150.00");
 
-        when(calculateProductPriceUseCase.execute(eq(productId), any(UserContext.class)))
+        when(calculateProductPriceUseCase.execute(eq(productId), any(User.class)))
                 .thenReturn(expectedPrice);
 
         // When (Appel direct de la méthode du contrôleur)

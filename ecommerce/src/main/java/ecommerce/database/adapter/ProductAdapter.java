@@ -1,7 +1,7 @@
 package ecommerce.database.adapter;
 
 import ecommerce.database.mapper.ProductMapper;
-import ecommerce.database.SpringDataProductRepository;
+import ecommerce.database.ProductRepository;
 import ecommerce.domain.model.Product;
 import ecommerce.domain.port.ProductPort;
 import org.springframework.stereotype.Component;
@@ -11,12 +11,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-public class DatabaseProductAdapter implements ProductPort {
+public class ProductAdapter implements ProductPort {
 
-    private final SpringDataProductRepository repository;
+    private final ProductRepository repository;
     private final ProductMapper mapper;
 
-    public DatabaseProductAdapter(SpringDataProductRepository repository, ProductMapper mapper) {
+    public ProductAdapter(ProductRepository repository, ProductMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }

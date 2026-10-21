@@ -1,0 +1,43 @@
+@if (authService.isAuthenticated()) {
+  <p-toolbar styleClass="custom-header-toolbar">
+
+    <!-- Partie Gauche : Logo / Titre -->
+    <ng-template #start>
+      <div class="flex align-items-center gap-2 cursor-pointer font-bold text-xl text-primary" (click)="goToCatalog()">
+        <i class="pi pi-box text-2xl"></i>
+        <span>Mon E-Commerce</span>
+      </div>
+    </ng-template>
+
+    <!-- Partie Droite : Actions (Panier & Profil) -->
+    <ng-template #end>
+      <div class="flex align-items-center gap-3">
+
+        <!-- Bouton Panier -->
+        <button
+          pButton
+          type="button"
+          class="p-button-outlined p-button-secondary p-button-sm"
+          (click)="goToCart()">
+          <i class="pi pi-shopping-cart mr-2"></i>
+          <span>Panier</span>
+        </button>
+
+        <!-- Bouton Menu Profil -->
+        <button
+          pButton
+          type="button"
+          class="p-button-text p-button-sm"
+          (click)="profileMenu.toggle($event)">
+          <span>Mon Profil</span>
+          <i class="pi pi-user ml-2"></i>
+        </button>
+
+        <!-- Composant Menu déroulant PrimeNG en mode popup -->
+        <p-menu #profileMenu [model]="profileItems" [popup]="true"></p-menu>
+
+      </div>
+    </ng-template>
+
+  </p-toolbar>
+}

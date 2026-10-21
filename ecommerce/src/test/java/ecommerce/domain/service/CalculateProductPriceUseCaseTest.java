@@ -1,6 +1,6 @@
 package ecommerce.domain.service;
 
-import ecommerce.domain.model.UserContext;
+import ecommerce.domain.model.User;
 import ecommerce.domain.port.PricingPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ class CalculateProductPriceUseCaseTest {
     void should_query_null_company_when_user_is_b2c() {
         // Given : Un utilisateur B2C (pas de companyId)
         Long productId = 5L;
-        UserContext b2cUser = new UserContext(1L, null);
+        User b2cUser = new User(1L, null);
 
         when(pricingPort.getPriceForProductAndCompany(productId, null))
                 .thenReturn(Optional.of(new BigDecimal("100.00")));
@@ -45,7 +45,7 @@ class CalculateProductPriceUseCaseTest {
         // Given : Un utilisateur B2B rattaché à l'entreprise 42
         Long productId = 5L;
         Long companyId = 42L;
-        UserContext b2bUser = new UserContext(1L, companyId);
+        User b2bUser = new User(1L, companyId);
 
         when(pricingPort.getPriceForProductAndCompany(productId, companyId))
                 .thenReturn(Optional.of(new BigDecimal("85.50")));

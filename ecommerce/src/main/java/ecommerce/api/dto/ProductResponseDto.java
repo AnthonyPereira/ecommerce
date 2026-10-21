@@ -1,8 +1,13 @@
 package ecommerce.api.dto;
 
 import ecommerce.domain.model.Product;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 
+@Getter
+@Setter
 public class ProductResponseDto {
 
     private Long id;
@@ -11,7 +16,6 @@ public class ProductResponseDto {
     private BigDecimal basePriceHt;
     private int stockQuantity;
 
-    // Méthode de mapping pratique depuis le modèle du domaine vers le DTO
     public static ProductResponseDto fromDomain(Product product) {
         ProductResponseDto dto = new ProductResponseDto();
         dto.id = product.getId();
@@ -21,20 +25,4 @@ public class ProductResponseDto {
         dto.stockQuantity = product.getStockQuantity();
         return dto;
     }
-
-    // Getters et Setters (ou utilisez Lombok avec @Data / @Getter / @Setter)
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getSku() { return sku; }
-    public void setSku(String sku) { this.sku = sku; }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
-    public BigDecimal getBasePriceHt() { return basePriceHt; }
-    public void setBasePriceHt(BigDecimal basePriceHt) { this.basePriceHt = basePriceHt; }
-
-    public int getStockQuantity() { return stockQuantity; }
-    public void setStockQuantity(int stockQuantity) { this.stockQuantity = stockQuantity; }
 }
