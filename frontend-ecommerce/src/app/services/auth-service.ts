@@ -1,21 +1,22 @@
 import { computed, Service, signal, inject } from '@angular/core';
-import { AuthResponse, LoginRequest } from '../models/auth.model';
-import { Observable, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
+import { AuthResponse, LoginRequest } from '../models/auth.model';
 
 @Service()
 export class AuthService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8080/auth';
 
-  // State via Signals
   private currentUserSignal = signal<AuthResponse | null>(this.loadUserFromStorage());
 
   readonly currentUser = this.currentUserSignal.asReadonly();
+
   readonly isAuthenticated = computed(() => this.currentUser() !== null);
+
   readonly isB2B = computed(() => {
     const user = this.currentUser();
-    return user !== null && user.companyId !== null;
+    return user !== null && user.companyId != null;
   });
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
@@ -27,17 +28,22 @@ export class AuthService {
     );
   }
 
-  logout() {
+  logout(): void {
     this.currentUserSignal.set(null);
     localStorage.removeItem('user_session');
   }
 
   private loadUserFromStorage(): AuthResponse | null {
-    if (typeof window === 'undefined' || !window.localStorage) {
+    if (typeof window === 'undefined') {
       return null;
     }
 
-    const stored = localStorage.getItem('user_session');
-    return stored ? JSON.parse(stored) : null;
+    try {
+      const stored = localStorage.getItem('user_session');
+      return stored ? (JSON.parse(stored) as AuthResponse) : null;
+    } catch {
+      localStorage.removeItem('user_session');
+      return null;
+    }
   }
 }

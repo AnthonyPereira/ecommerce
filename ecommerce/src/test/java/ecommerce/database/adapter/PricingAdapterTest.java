@@ -1,7 +1,8 @@
+
 package ecommerce.database.adapter;
 
-import ecommerce.database.mapper.ProductPriceMapper;
 import ecommerce.database.ProductPriceRepository;
+import ecommerce.database.mapper.ProductPriceMapper;
 import ecommerce.database.model.ProductPriceJpaEntity;
 import ecommerce.domain.model.ProductPrice;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +15,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class PricingAdapterTest {
+class PricingAdapterTest {
+
     private ProductPriceRepository repository;
     private ProductPriceMapper mapper;
     private PricingAdapter adapter;
@@ -27,48 +29,83 @@ public class PricingAdapterTest {
     }
 
     @Test
-    void should_return_price_when_found_in_database() {
-        // Given
+    void should_return_company_specific_price_when_found() {
         Long productId = 1L;
-        Long companyId = 1L;
+        Long companyId = 10L;
         BigDecimal expectedPrice = new BigDecimal("2150.00");
 
-        ProductPriceJpaEntity jpaEntity = new ProductPriceJpaEntity();
+        ProductPriceJpaEntity entity = new ProductPriceJpaEntity();
         ProductPrice domainModel = mock(ProductPrice.class);
 
-        // 1. On stubbe le repository JPA
         when(repository.findByProductIdAndCompanyId(productId, companyId))
-                .thenReturn(Optional.of(jpaEntity));
-
-        // 2. On stubbe le mapper pour qu'il renvoie un objet domaine valide
-        when(mapper.toDomain(jpaEntity)).thenReturn(domainModel);
-
-        // 3. On stubbe l'objet domaine pour qu'il retourne le prix attendu
+                .thenReturn(Optional.of(entity));
+        when(mapper.toDomain(entity)).thenReturn(domainModel);
         when(domainModel.getPriceHt()).thenReturn(expectedPrice);
 
-        // When
-        Optional<BigDecimal> result = adapter.getPriceForProductAndCompany(productId, companyId);
+        Optional<BigDecimal> result =
+                adapter.getPriceForProductAndCompany(productId, companyId);
 
-        // Then
-        assertThat(result).isPresent();
-        assertThat(result.get()).isEqualByComparingTo(expectedPrice);
-        verify(repository, times(1)).findByProductIdAndCompanyId(productId, companyId);
+        assertThat(result).contains(expectedPrice);
+        verify(repository).findByProductIdAndCompanyId(productId, companyId);
+        verify(repository, never())
+                .findByProductIdAndCompanyIdIsNull(productId);
     }
 
     @Test
-    void should_return_empty_when_price_not_found() {
-        // Given
+    void should_fallback_to_public_price_when_company_price_is_missing() {
+        Long productId = 1L;
+        Long companyId = 10L;
+        BigDecimal publicPrice = new BigDecimal("100.00");
+
+        ProductPriceJpaEntity publicEntity = new ProductPriceJpaEntity();
+        ProductPrice publicModel = mock(ProductPrice.class);
+
+        when(repository.findByProductIdAndCompanyId(productId, companyId))
+                .thenReturn(Optional.empty());
+        when(repository.findByProductIdAndCompanyIdIsNull(productId))
+                .thenReturn(Optional.of(publicEntity));
+        when(mapper.toDomain(publicEntity)).thenReturn(publicModel);
+        when(publicModel.getPriceHt()).thenReturn(publicPrice);
+
+        Optional<BigDecimal> result =
+                adapter.getPriceForProductAndCompany(productId, companyId);
+
+        assertThat(result).contains(publicPrice);
+        verify(repository).findByProductIdAndCompanyId(productId, companyId);
+        verify(repository).findByProductIdAndCompanyIdIsNull(productId);
+    }
+
+    @Test
+    void should_return_empty_when_company_and_public_prices_are_missing() {
         Long productId = 99L;
-        Long companyId = null;
+        Long companyId = 10L;
+
+        when(repository.findByProductIdAndCompanyId(productId, companyId))
+                .thenReturn(Optional.empty());
+        when(repository.findByProductIdAndCompanyIdIsNull(productId))
+                .thenReturn(Optional.empty());
+
+        Optional<BigDecimal> result =
+                adapter.getPriceForProductAndCompany(productId, companyId);
+
+        assertThat(result).isEmpty();
+        verify(repository).findByProductIdAndCompanyId(productId, companyId);
+        verify(repository).findByProductIdAndCompanyIdIsNull(productId);
+    }
+
+    @Test
+    void should_return_empty_when_public_price_is_missing_for_anonymous_user() {
+        Long productId = 99L;
 
         when(repository.findByProductIdAndCompanyIdIsNull(productId))
                 .thenReturn(Optional.empty());
 
-        // When
-        Optional<BigDecimal> result = adapter.getPriceForProductAndCompany(productId, companyId);
+        Optional<BigDecimal> result =
+                adapter.getPriceForProductAndCompany(productId, null);
 
-        // Then
         assertThat(result).isEmpty();
-        verify(repository, times(1)).findByProductIdAndCompanyIdIsNull(productId);
+        verify(repository).findByProductIdAndCompanyIdIsNull(productId);
+        verify(repository, never())
+                .findByProductIdAndCompanyId(anyLong(), anyLong());
     }
 }

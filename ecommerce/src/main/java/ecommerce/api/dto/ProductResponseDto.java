@@ -16,12 +16,12 @@ public class ProductResponseDto {
     private BigDecimal basePriceHt;
     private int stockQuantity;
 
-    public static ProductResponseDto fromDomain(Product product) {
+    public static ProductResponseDto fromDomain(Product product, BigDecimal displayedPriceHt) {
         ProductResponseDto dto = new ProductResponseDto();
         dto.id = product.getId();
         dto.sku = product.getSku();
         dto.name = product.getName();
-        dto.basePriceHt = product.getBasePriceHt();
+        dto.basePriceHt = displayedPriceHt;
         dto.stockQuantity = product.getStockQuantity();
         return dto;
     }

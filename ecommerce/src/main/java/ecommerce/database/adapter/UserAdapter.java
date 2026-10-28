@@ -29,4 +29,10 @@ public class UserAdapter implements UserPort {
         return userRepository.findByEmail(email)
                 .map(entity -> entity.getPasswordHash());
     }
+
+    @Override
+    public Optional<User> findById(Long userId) {
+        return userRepository.findById(userId)
+                .map(userMapper::toDomain);
+    }
 }

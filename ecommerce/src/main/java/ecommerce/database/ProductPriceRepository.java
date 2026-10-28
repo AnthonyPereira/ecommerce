@@ -4,6 +4,7 @@ import ecommerce.database.model.ProductPriceJpaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,4 +15,10 @@ public interface ProductPriceRepository extends JpaRepository<ProductPriceJpaEnt
 
     // Recherche le prix public par défaut (B2C, où company_id est NULL)
     Optional<ProductPriceJpaEntity> findByProductIdAndCompanyIdIsNull(Long productId);
+
+    // Tous les prix publics
+    List<ProductPriceJpaEntity> findByCompanyIdIsNull();
+
+    // Prix négociés d'une entreprise uniquement
+    List<ProductPriceJpaEntity> findByCompanyId(Long companyId);
 }

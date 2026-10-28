@@ -22,10 +22,10 @@ public class LoginUseCase {
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
         // 2. Vérifier le mot de passe avec BCrypt
         if (!passwordEncoder.matches(rawPassword, passwordHash)) {
-            throw new RuntimeException("Mot de passe invalide "+passwordHash);
+            throw new RuntimeException("Mot de passe invalide");
         }
 
-        // 3. Retourner le contexte utilisateur (sans jamais avoir manipulé le hash dans le domaine)
+        // 3. Retourner le contexte utilisateur
         return userPort.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
     }

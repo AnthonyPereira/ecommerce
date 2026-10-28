@@ -8,4 +8,6 @@ public interface UserPort {
     Optional<User> findByEmail(String email);
 
     Optional<String> findPasswordHashByEmail(String email);
+
+    Optional<User> findById(Long userId);
 }

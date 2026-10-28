@@ -1,21 +1,32 @@
+
 package ecommerce.domain.model;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
-@Setter
 @Getter
+@Setter
 public class User {
-    private Long userId;
+    private Long Id;
     private Long companyId;
     private String firstName;
     private String lastName;
     private String email;
+    private Role role;
 
-    public User(Long userId, Long companyId, String firstName, String lastName, String email){
-        this.userId = userId;
+    public User(
+            Long Id,
+            Long companyId,
+            String firstName,
+            String lastName,
+            String email,
+            Role role
+    ) {
+        this.Id = Id;
         this.companyId = companyId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.role = role;
     }
 }

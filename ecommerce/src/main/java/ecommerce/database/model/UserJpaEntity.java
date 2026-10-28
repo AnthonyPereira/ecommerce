@@ -1,3 +1,4 @@
+
 package ecommerce.database.model;
 
 import jakarta.persistence.*;
@@ -28,8 +29,13 @@ public class UserJpaEntity {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    // Optionnel : null pour B2C, lié à une Company pour B2B
+    // Null pour un particulier ; entreprise pour un professionnel
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "company_id")
     private CompanyJpaEntity company;
+
+    // Rôle obligatoire de l'utilisateur
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "role_id", nullable = false)
+    private RoleJpaEntity role;
 }
