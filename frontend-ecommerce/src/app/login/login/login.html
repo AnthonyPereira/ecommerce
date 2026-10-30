@@ -23,8 +23,8 @@
         />
       </div>
 
-      @if (errorMessage) {
-        <p-message severity="error">{{ errorMessage }}</p-message>
+      @if (errorMessage(); as message) {
+        <p-message severity="error">{{ message }}</p-message>
       }
 
       <button

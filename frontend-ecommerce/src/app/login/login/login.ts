@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CardModule } from 'primeng/card';
@@ -7,6 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { MessageModule } from 'primeng/message';
 import { AuthService } from '../../services/auth-service';
 import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   imports: [
@@ -24,7 +25,7 @@ import { Router } from '@angular/router';
 export class Login {
   loginForm: FormGroup;
   loading = false;
-  errorMessage = '';
+  errorMessage = signal<string | null>(null);
 
   constructor(
     private fb: FormBuilder,
@@ -38,24 +39,43 @@ export class Login {
   }
 
   onSubmit() {
-    if (this.loginForm.invalid) return;
+    this.errorMessage.set(null);
+
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
 
     this.loading = true;
-    this.errorMessage = '';
 
     this.authService.login(this.loginForm.value).subscribe({
       next: (res) => {
         this.loading = false;
-        console.log(
-          'Connexion réussie ! Profil B2B/B2C :',
-          res.companyId ? 'B2B (Company ID: ' + res.companyId + ')' : 'B2C',
-        );
         this.router.navigate(['/catalog']);
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         this.loading = false;
-        this.errorMessage = 'Email ou mot de passe incorrect.';
-        console.error(err);
+
+        switch (err.status) {
+          case 401:
+            this.errorMessage.set(
+              'Identifiants incorrects. Vérifiez votre adresse e-mail et votre mot de passe.',
+            );
+            break;
+
+          case 429:
+            this.errorMessage.set(
+              'Trop de tentatives de connexion. Veuillez réessayer dans 15 minutes.',
+            );
+            break;
+
+          case 0:
+            this.errorMessage.set('Impossible de contacter le serveur. Vérifiez votre connexion.');
+            break;
+
+          default:
+            this.errorMessage.set('Une erreur est survenue. Veuillez réessayer ultérieurement.');
+        }
       },
     });
   }
