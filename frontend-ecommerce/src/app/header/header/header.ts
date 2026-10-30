@@ -57,6 +57,5 @@ export class Header {
   logout() {
     this.isProfileMenuOpen.set(false);
     this.authService.logout();
-    void this.router.navigate(['/']);
   }
 }

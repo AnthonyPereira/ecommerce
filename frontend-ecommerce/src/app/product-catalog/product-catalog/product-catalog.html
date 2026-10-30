@@ -6,8 +6,8 @@
       <input
         type="text"
         pInputText
-        [(ngModel)]="searchTerm"
-        (input)="onSearchChange()"
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
         placeholder="Rechercher un produit par son nom..."
         class="w-full"
       />

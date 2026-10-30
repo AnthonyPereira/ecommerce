@@ -87,6 +87,32 @@ CREATE TABLE product_prices (
     CONSTRAINT uk_product_company UNIQUE (product_id, company_id)
 );
 
+CREATE TABLE login_attempts (
+    id BIGSERIAL PRIMARY KEY,
+
+    scope_type VARCHAR(10) NOT NULL,
+    identifier_hash VARCHAR(64) NOT NULL,
+
+    failed_attempts INTEGER NOT NULL DEFAULT 0,
+
+    window_started_at TIMESTAMPTZ NOT NULL,
+    blocked_until TIMESTAMPTZ,
+
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT chk_login_attempt_scope
+        CHECK (scope_type IN ('EMAIL', 'IP')),
+
+    CONSTRAINT chk_login_attempt_count
+        CHECK (failed_attempts >= 0),
+
+    CONSTRAINT uk_login_attempt_scope
+        UNIQUE (scope_type, identifier_hash)
+);
+
+CREATE INDEX idx_login_attempts_blocked_until
+    ON login_attempts (blocked_until);
+
 -- ==========================================
 -- 4. REMPLISSAGE DES DONNÉES (SEEDING)
 -- ==========================================

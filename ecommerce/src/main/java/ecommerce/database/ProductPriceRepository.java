@@ -10,15 +10,11 @@ import java.util.Optional;
 @Repository
 public interface ProductPriceRepository extends JpaRepository<ProductPriceJpaEntity, Long> {
 
-    // Recherche un prix négocié pour une entreprise spécifique (B2B)
     Optional<ProductPriceJpaEntity> findByProductIdAndCompanyId(Long productId, Long companyId);
 
-    // Recherche le prix public par défaut (B2C, où company_id est NULL)
     Optional<ProductPriceJpaEntity> findByProductIdAndCompanyIdIsNull(Long productId);
 
-    // Tous les prix publics
     List<ProductPriceJpaEntity> findByCompanyIdIsNull();
 
-    // Prix négociés d'une entreprise uniquement
     List<ProductPriceJpaEntity> findByCompanyId(Long companyId);
 }

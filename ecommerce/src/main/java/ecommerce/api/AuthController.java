@@ -5,6 +5,7 @@ import ecommerce.api.dto.LoginRequestDto;
 import ecommerce.domain.security.JwtService;
 import ecommerce.domain.model.User;
 import ecommerce.domain.service.LoginUseCase;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,9 +22,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDto> login(@RequestBody LoginRequestDto request) {
+    public ResponseEntity<AuthResponseDto> login(@RequestBody LoginRequestDto request, HttpServletRequest httpRequest) {
 
-        User user = loginUseCase.authenticate(request.email(), request.password());
+        User user = loginUseCase.authenticate(request.email(), request.password(), httpRequest.getRemoteAddr());
 
         String fullName = user.getFirstName() + " " + user.getLastName();
 

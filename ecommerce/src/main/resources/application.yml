@@ -1,0 +1,10 @@
+app:
+  security:
+    login-attempts:
+      email:
+        max-attempts: 5
+      ip:
+        max-attempts: 20
+      window: 15m
+      block-duration: 15m
+      hmac-secret: xRLEA/Xa+ITiE/oKZsxXAyjuIMBiFbnnDR+GBTarJ9A=

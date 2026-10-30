@@ -29,6 +29,10 @@ export class AuthService {
   }
 
   logout(): void {
+    this.clearSession();
+  }
+
+  clearSession(): void {
     this.currentUserSignal.set(null);
     localStorage.removeItem('user_session');
   }
